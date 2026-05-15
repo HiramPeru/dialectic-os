@@ -10,3 +10,7 @@ trafilatura
 httpx
 python-dotenv
 alembic
+
+spacy
+beautifulsoup4
+requests
