@@ -3,7 +3,7 @@ import uuid
 
 from sqlalchemy.orm import Session
 
-from app.models.article import Article
+from app.db.models.article import Article
 from app.connectors.rss import RSSConnector
 
 CONNECTORS = [

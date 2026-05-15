@@ -5,12 +5,11 @@ psycopg2-binary
 redis
 pydantic
 pydantic-settings
+python-dotenv
+alembic
 feedparser
 trafilatura
 httpx
-python-dotenv
-alembic
-
-spacy
-beautifulsoup4
 requests
+beautifulsoup4
+spacy

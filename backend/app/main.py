@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routes import health, events, ingest, articles, intelligence
+from app.api.routes import health, events, ingest, articles, intelligence
 
 app = FastAPI(title="Dialectic Dashboard API")
 

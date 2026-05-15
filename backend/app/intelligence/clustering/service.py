@@ -5,8 +5,8 @@ from collections import defaultdict
 import spacy
 from sqlalchemy.orm import Session
 
-from app.models.article import Article
-from app.models.event import Event
+from app.db.models.article import Article
+from app.db.models.event import Event
 
 nlp = spacy.load("en_core_web_sm")
 

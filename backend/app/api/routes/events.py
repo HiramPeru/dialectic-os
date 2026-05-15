@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.core.db import get_db
-from app.models.event import Event
-from app.services.clustering import cluster_articles
+from app.db.models.event import Event
+from app.intelligence.clustering.service import cluster_articles
 
 router = APIRouter()
 

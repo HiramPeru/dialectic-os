@@ -2,10 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.core.db import get_db
-from app.models.article import Article
-from app.services.ai.consensus import consensus_from_articles
-from app.services.ai.divergence import divergence_from_articles
-from app.services.ai.briefing import executive_briefing
+from app.db.models.article import Article
+from app.intelligence.analysis.consensus import consensus_from_articles
+from app.intelligence.analysis.divergence import divergence_from_articles
+from app.intelligence.analysis.briefing import executive_briefing
 
 router = APIRouter()
 

@@ -1,4 +1,4 @@
-from app.services.ai.ollama_client import ask_gemma
+from app.intelligence.providers.ollama import ask_gemma
 
 def consensus_from_articles(articles):
     joined = "\n\n".join([
