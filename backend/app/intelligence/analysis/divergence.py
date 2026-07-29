@@ -1,4 +1,4 @@
-from app.intelligence.providers.ollama import ask_gemma
+from app.intelligence.providers import generate_text
 
 def divergence_from_articles(articles):
     joined = "\n\n".join([
@@ -26,4 +26,10 @@ OUTPUT:
 Narrative divergence analysis:
 """
 
-    return ask_gemma(prompt)
+    return generate_text(
+        prompt,
+        system_prompt=(
+            "You compare narratives without assuming that any source is neutral. "
+            "Tie every conclusion to the supplied reports."
+        ),
+    )

@@ -1,4 +1,4 @@
-from app.intelligence.providers.ollama import ask_gemma
+from app.intelligence.providers import generate_text
 
 def consensus_from_articles(articles):
     joined = "\n\n".join([
@@ -22,4 +22,10 @@ OUTPUT:
 Consensus facts:
 """
 
-    return ask_gemma(prompt)
+    return generate_text(
+        prompt,
+        system_prompt=(
+            "You identify only claims supported by the supplied evidence. "
+            "Separate verified facts from uncertainty and never invent sources."
+        ),
+    )
