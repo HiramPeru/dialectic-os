@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import Map, { Marker, Source, Layer } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Activity, Brain } from 'lucide-react';
@@ -11,6 +11,24 @@ type EventItem = {
   topic: string;
   article_count: number;
 };
+
+type EventFeatureCollection = {
+  type: 'FeatureCollection';
+  features: Array<{
+    type: 'Feature';
+    geometry: {
+      type: 'Point';
+      coordinates: [number, number];
+    };
+    properties: {
+      title: string;
+    };
+  }>;
+};
+
+const API = (
+  process.env.NEXT_PUBLIC_API_URL ?? 'http://127.0.0.1:8000'
+).replace(/\/$/, '');
 
 const GEO: Record<string, [number, number]> = {
   CHINA: [103, 35],
@@ -34,7 +52,13 @@ function coords(topic: string): [number, number] {
   return [Math.random() * 360 - 180, Math.random() * 140 - 70];
 }
 
-function Panel({ title, children }: any) {
+function Panel({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-5">
       <div className="text-sm uppercase tracking-[0.2em] text-cyan-300 mb-4">
@@ -49,12 +73,12 @@ export default function Home() {
   const [events, setEvents] = useState<EventItem[]>([]);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/events')
+    fetch(`${API}/events`)
       .then((r) => r.json())
       .then(setEvents);
   }, []);
 
-  const geojson = useMemo(() => ({
+  const geojson = useMemo<EventFeatureCollection>(() => ({
     type: 'FeatureCollection',
     features: events.slice(0, 20).map((e) => {
       const [lng, lat] = coords(e.topic);
@@ -103,7 +127,7 @@ export default function Home() {
               }}
               mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
             >
-              <Source id="events" type="geojson" data={geojson as any}>
+              <Source id="events" type="geojson" data={geojson}>
                 <Layer
                   id="event-points"
                   type="circle"

@@ -1,4 +1,4 @@
-from app.intelligence.providers.ollama import ask_gemma
+from app.intelligence.providers import generate_text
 
 def executive_briefing(articles):
     joined = "\n\n".join([
@@ -20,4 +20,10 @@ INPUT:
 {joined}
 """
 
-    return ask_gemma(prompt)
+    return generate_text(
+        prompt,
+        system_prompt=(
+            "You produce concise strategic briefings from supplied evidence. "
+            "Mark uncertainty explicitly and do not add unsupported facts."
+        ),
+    )

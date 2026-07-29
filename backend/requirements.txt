@@ -9,7 +9,7 @@ python-dotenv
 alembic
 feedparser
 trafilatura
-httpx
+httpx[socks]
 requests
 beautifulsoup4
 spacy
