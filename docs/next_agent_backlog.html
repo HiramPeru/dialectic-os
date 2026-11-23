@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DialecticDashboard - Backlog para Siguiente Agente</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #080b10;
+        --panel: #101720;
+        --line: #263547;
+        --text: #e8eef7;
+        --muted: #9baec4;
+        --cyan: #62d7f4;
+        --green: #61d394;
+        --amber: #f0c36a;
+        --red: #ff7a8a;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        line-height: 1.6;
+      }
+
+      main {
+        width: min(1120px, calc(100vw - 48px));
+        margin: 0 auto;
+        padding: 44px 0 64px;
+      }
+
+      header,
+      section {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+
+      header {
+        margin-bottom: 18px;
+        padding: 28px;
+      }
+
+      section {
+        margin: 16px 0;
+        padding: 24px;
+      }
+
+      h1,
+      h2,
+      h3 {
+        line-height: 1.15;
+        margin: 0;
+      }
+
+      h1 {
+        font-size: clamp(34px, 4.5vw, 58px);
+        letter-spacing: -0.03em;
+      }
+
+      h2 {
+        color: var(--cyan);
+        font-size: 23px;
+        margin-bottom: 14px;
+      }
+
+      h3 {
+        font-size: 16px;
+        margin-top: 18px;
+      }
+
+      p {
+        margin: 8px 0 0;
+      }
+
+      ul,
+      ol {
+        margin: 10px 0 0;
+        padding-left: 22px;
+      }
+
+      li {
+        margin: 7px 0;
+      }
+
+      code,
+      pre {
+        background: #05070a;
+        border: 1px solid var(--line);
+        color: var(--cyan);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", monospace;
+      }
+
+      code {
+        border-radius: 4px;
+        padding: 1px 6px;
+      }
+
+      pre {
+        border-radius: 8px;
+        overflow-x: auto;
+        padding: 14px;
+        white-space: pre;
+      }
+
+      table {
+        border-collapse: collapse;
+        margin-top: 12px;
+        width: 100%;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid var(--line);
+        padding: 10px;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        color: var(--cyan);
+      }
+
+      .subtitle {
+        color: var(--muted);
+        font-size: 17px;
+        max-width: 880px;
+      }
+
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 16px;
+      }
+
+      .pill {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--muted);
+        padding: 5px 10px;
+      }
+
+      .ok {
+        color: var(--green);
+      }
+
+      .warn {
+        color: var(--amber);
+      }
+
+      .risk {
+        color: var(--red);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Backlog para Siguiente Agente</h1>
+        <p class="subtitle">
+          Lista priorizada y actualizada de lo que falta para llevar DialecticDashboard desde
+          el MVP funcional actual hacia una versión production-ready y más útil
+          para analistas. Actualizado después de validar las prioridades P1.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Estado actual: P1 validado</span>
+          <span class="pill">Alembic head: a7b4c2d9e8f1</span>
+          <span class="pill">Tests backend: 27/27 OK</span>
+          <span class="pill">Frontend lint/build OK</span>
+          <span class="pill">nomic-embed-text instalado</span>
+        </div>
+      </header>
+
+      <section>
+        <h2>1. Estado desde donde continuar</h2>
+        <ul>
+          <li>Contradiction detection usa retrieval antes del LLM; no volver a comparación completa <code>O(n²)</code>.</li>
+          <li>Claims tienen <code>normalized_claim_text</code>, <code>semantic_hash</code> y <code>embedding vector(384)</code>.</li>
+          <li>pgvector tiene índice <code>ix_claims_embedding_ivfflat</code>.</li>
+          <li>La relación <code>events ↔ event_articles ↔ articles</code> existe y <code>cluster_articles</code> ya la puebla.</li>
+          <li>La API tiene cola de contradicciones, métricas, revisión y reembedding.</li>
+          <li>La UI muestra mapa, eventos, cola de revisión, métricas y acciones confirmar/descartar.</li>
+          <li>Los eventos del mapa y de la lista son seleccionables y cargan artículos reales desde <code>/events/{event_id}/articles</code>.</li>
+          <li>Las métricas de contradicciones leen estados reales de moderación: <code>needs_review</code>, <code>confirmed</code> y <code>dismissed</code>.</li>
+          <li>El recálculo de embeddings tiene estado consultable por job con progreso, timestamps, errores y modelo usado; también se pueden listar jobs recientes.</li>
+          <li>Los jobs de embeddings se persisten en Postgres en <code>embedding_jobs</code>; ya no dependen solo de memoria del proceso.</li>
+          <li>Los scans de contradicciones corren como jobs asíncronos persistidos en <code>contradiction_scan_jobs</code>, con progreso por candidatos adjudicados.</li>
+          <li>Último scan real: 12/12 candidatos adjudicados, 0 errores, 0 contradicciones nuevas porque ya existían 4 en la cola.</li>
+          <li>La ingesta corre como job asíncrono persistido en <code>ingest_jobs</code>, con progreso por fuente y conteos de fetched/inserted/claims/duplicates.</li>
+          <li>Última ingesta real: 2/2 fuentes, 10 ítems revisados, 1 artículo nuevo, 4 claims nuevos, 9 duplicados y 0 errores.</li>
+          <li>Los claims nuevos usan el proveedor central <code>claim_embedding</code>; con <code>nomic-embed-text</code> instalado ya no nacen con embeddings determinísticos salvo fallback.</li>
+          <li>Existe <code>GET /operations/jobs</code> para ver ingesta, embeddings y scan en una sola respuesta operacional.</li>
+          <li>La UI incluye panel <strong>Pipeline Operations</strong> con estados recientes, historial corto por etapa y acciones para ingesta, re-embedding y scan.</li>
+          <li><code>nomic-embed-text</code> está instalado en Ollama local y se ejecutó recálculo completo: 26/26 claims procesados, 0 errores.</li>
+          <li>Con embeddings reales, las métricas reportan 12 pares candidatos desde 325 pares posibles, con reducción aproximada de 96.3%.</li>
+          <li>El scanner automático está desactivado por defecto con <code>BACKGROUND_SCANNER_ENABLED=false</code>.</li>
+          <li>No se encontró <code>walkthrough.md</code> en el árbol del proyecto; usar este documento y <code>agent_handoff_phase_2_update.html</code> como handoff vigente.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>2. Próximo Bloque Prioritario</h2>
+        <h3>P2 - Endurecer operación y observabilidad</h3>
+        <p>
+          Las prioridades P1 ya quedaron implementadas y verificadas localmente.
+          La siguiente fase debe convertir el MVP en una operación más controlable:
+          trazabilidad del pipeline completo y calibración
+          de calidad para reducir falsos positivos.
+        </p>
+        <ul>
+          <li>Agregar vista expandida de errores y payload completo por job desde la UI operacional.</li>
+          <li>Separar extracción de claims como job independiente si se decide desacoplarla de ingesta.</li>
+          <li>Calibrar umbrales de retrieval y adjudicación contra una muestra revisada manualmente.</li>
+          <li>Agregar tests de integración con base de datos aislada.</li>
+        </ul>
+        <p><strong>Criterio de aceptación:</strong> un operador puede saber qué jobs corrieron, cuántos claims/artículos procesaron, qué errores hubo y qué contradicciones requieren acción.</p>
+      </section>
+
+      <section>
+        <h2>3. Backlog Priorizado</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Prioridad</th>
+              <th>Tarea</th>
+              <th>Criterio de aceptación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Done</td>
+              <td>Conectar drill-down de eventos con <code>/events/{event_id}/articles</code>.</td>
+              <td>Un evento seleccionado muestra solo sus artículos reales asociados por <code>event_articles</code>.</td>
+            </tr>
+            <tr>
+              <td>Done</td>
+              <td>Revisar falsos positivos históricos en contradicciones.</td>
+              <td>La UI permite descartar/confirmar y los estados quedan persistidos; métricas reflejan la cola real.</td>
+            </tr>
+            <tr>
+              <td>Done</td>
+              <td>Configurar un modelo real de embeddings en Ollama.</td>
+              <td><code>nomic-embed-text</code> instalado; <code>OLLAMA_EMBEDDING_MODEL</code> configurado; recálculo completo ejecutado contra 26 claims.</td>
+            </tr>
+            <tr>
+              <td>Done</td>
+              <td>Hacer reembedding por batch con progreso.</td>
+              <td>El endpoint inicia el job, persiste el historial en Postgres y permite consultar progreso, conteos, errores, timestamps y modelo.</td>
+            </tr>
+            <tr>
+              <td>P2</td>
+              <td>Metadata enriquecida de fuentes.</td>
+              <td>Fuentes tienen región, clase, trust score, bias axis y ownership cuando aplique.</td>
+            </tr>
+            <tr>
+              <td>P2</td>
+              <td>Mejorar filtros de ingesta.</td>
+              <td>Sports, liveblogs, explainers, opinion y duplicados blandos quedan filtrados antes de extracción de claims.</td>
+            </tr>
+            <tr>
+              <td>P2</td>
+              <td>Automatizar pipeline post-ingesta.</td>
+              <td>Después de ingestar se puede disparar clustering y scan sin intervención manual, controlado por configuración.</td>
+            </tr>
+            <tr>
+              <td>P3</td>
+              <td>Tests de integración con DB aislada.</td>
+              <td>Suite puede correr sin depender del estado de la DB local persistente.</td>
+            </tr>
+            <tr>
+              <td>P3</td>
+              <td>Observabilidad del worker.</td>
+              <td>Logs y métricas muestran últimas ejecuciones de todos los jobs, duración, errores y contradicciones creadas.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>4. Riesgos Técnicos a Cuidar</h2>
+        <ul>
+          <li><span class="risk">No reintroducir O(n²) con Gemma.</span> Todo nuevo scan debe pasar por retrieval/candidatos.</li>
+          <li><span class="warn">No dejar fixtures en DB.</span> Usar rollback o limpieza explícita.</li>
+          <li><span class="warn">No activar scanner automático por defecto.</span> Puede disparar llamadas lentas a Ollama en desarrollo.</li>
+          <li><span class="warn">Cuidar Alembic.</span> Toda columna/tabla nueva necesita migración reproducible.</li>
+          <li><span class="warn">No asumir que Ollama tiene modelo de embeddings en otros entornos.</span> En esta máquina ya está <code>nomic-embed-text</code>, pero nuevos contenedores o hosts deben validarlo con <code>ollama list</code>.</li>
+          <li><span class="warn">No confiar en documentos ausentes.</span> Si otro agente cita <code>walkthrough.md</code>, primero confirmar que el archivo exista en este repo.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>5. Comandos de Verificación Obligatorios</h2>
+        <pre>cd /Users/horus/Dev/Products/DialecticDashboard/dialectic-dashboard/backend
+.venv/bin/python -m alembic current
+.venv/bin/python -m compileall app tests
+.venv/bin/python -m unittest discover -s tests -v</pre>
+
+        <pre>cd /Users/horus/Dev/Products/DialecticDashboard/dialectic-dashboard/apps/web
+npm run lint
+npm run build</pre>
+
+        <pre>cd /Users/horus/Dev/Products/DialecticDashboard/dialectic-dashboard/backend
+.venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000</pre>
+
+        <pre>curl -sS http://127.0.0.1:8000/health
+curl -sS http://127.0.0.1:8000/events
+curl -sS http://127.0.0.1:8000/intelligence/contradictions/metrics
+curl -sS "http://127.0.0.1:8000/ingest/run?limit=1"
+curl -sS "http://127.0.0.1:8000/operations/jobs?limit=2"
+curl -sS "http://127.0.0.1:8000/intelligence/contradictions/scan?limit=1"
+curl -sS "http://127.0.0.1:8000/intelligence/embeddings/recalculate?limit=1"</pre>
+      </section>
+
+      <section>
+        <h2>6. Archivos que Probablemente se Toquen Después</h2>
+        <ul>
+          <li><code>apps/web/src/app/page.tsx</code> - refinar selección de eventos, estados vacíos y experiencia de revisión.</li>
+          <li><code>backend/app/api/routes/events.py</code> - ampliar payload de eventos si la UI necesita conteos/contexto.</li>
+          <li><code>backend/app/intelligence/clustering/service.py</code> - mejorar agrupamiento y membresía.</li>
+          <li><code>backend/app/services/embedding_jobs.py</code> - estado persistente de jobs de reembedding.</li>
+          <li><code>backend/app/db/models/embedding_job.py</code> - modelo DB para historial de recálculo.</li>
+          <li><code>backend/app/services/contradiction_scan_jobs.py</code> - estado persistente de scans de contradicciones.</li>
+          <li><code>backend/app/db/models/contradiction_scan_job.py</code> - modelo DB para historial de scans.</li>
+          <li><code>backend/app/services/ingest_jobs.py</code> - estado persistente de jobs de ingesta.</li>
+          <li><code>backend/app/db/models/ingest_job.py</code> - modelo DB para historial de ingesta.</li>
+          <li><code>backend/app/services/claim_embeddings.py</code> - batch de embeddings y normalización de proveedor.</li>
+          <li><code>backend/app/intelligence/retrieval/pgvector_candidates.py</code> - calibrar recall de candidatos.</li>
+          <li><code>backend/app/intelligence/analysis/contradictions.py</code> - seguir bajando falsos positivos del adjudicador.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>7. Definición de “Siguiente Entrega Completa”</h2>
+        <p>
+          La siguiente entrega debería permitir que un analista opere el pipeline
+          con historial persistente: revisar ingesta, embeddings y scan, ver
+          duración/errores por ejecución, y calibrar contradicciones con una muestra
+          revisada sin depender de datos sintéticos ni heurísticas frágiles.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>
+
+## RML PENDING
+Repository Memory Layer intentionally deferred. Install only after current functional changes are committed or stashed.
